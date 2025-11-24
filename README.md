@@ -1,7 +1,8 @@
 <h1 align="center">Hi 👋, I'm seyam</h1>
-<h3 align="center">A passionate software engineer </h3>
+<h3 align="center">A passionate software engineer </h3> 
 
-<p align="left"> <img src="https://komarev.com/ghpvc/?username=seyam460&label=Profile%20views&color=0e75b6&style=flat" alt="seyam460" /> </p>
+<p align="left"> <img src="https://komarev.com/ghpvc/?username=seyam460&label=Profile%20views&color=0e75b6&style=flat" alt="seyam460" /> </p> <img width="392" height="187" alt="image" src="https://github.com/user-attachments/assets/21359725-4e62-4225-83e2-9c7a75bdb1c8" />
+
 
 <p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=seyam460" alt="seyam460" /></a> </p>
 
