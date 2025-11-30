@@ -2,30 +2,26 @@ class Coffee:
     def __init__(self, name, price):
         self.name = name
         self.price = price
-
-
 class Order:
     def __init__(self):
         self.items = []
 
-    def add_item(self, coffee):
+def add_item(self, coffee):
         self.items.append(coffee)
         print(f"Added {coffee.name} to your order.")
 
-    def total(self):
+def total(self):
         return sum(item.price for item in self.items)
-
-    def show_order(self):
+ def show_order(self):
         if not self.items:
             print("No items in order.")
             return
-
         print("\nYour order:")
         for i, item in enumerate(self.items, 1):
             print(f"{i}. {item.name} - ${item.price}")
         print(f"Total: ${self.total()}\n")
 
-    def checkout(self):
+def checkout(self):
         if not self.items:
             print("Your cart is empty.")
             return
@@ -38,8 +34,6 @@ class Order:
             self.items.clear()
         else:
             print("Checkout cancelled.")
-
-
 def main():
     menu = [
         Coffee("espresso", 2.5),
@@ -47,10 +41,8 @@ def main():
         Coffee("cappuccino", 3.0),
         Coffee("americano", 2.0)
     ]
-
-    order = Order()
-
-    while True:
+   order = Order()
+   while True:
         print("\n--- Coffee Menu ---")
         for i, coffee in enumerate(menu, 1):
             print(f"{i}. {coffee.name} - ${coffee.price}")
@@ -73,6 +65,6 @@ def main():
         else:
             print("Invalid choice. Try again.")
 
-
 if __name__ == "__main__":
+
     main()
