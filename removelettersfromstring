@@ -1,0 +1,10 @@
+S = input("enter a string: ")
+
+remove_char = input("enter character to remove: ")
+
+result = " "
+for ch in S: 
+     if ch not in remove_char:
+      result += ch
+
+print ("result: ",result)
