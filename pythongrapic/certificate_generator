@@ -1,0 +1,240 @@
+from PIL import Image, ImageDraw, ImageFont
+import pandas as pd
+import os
+
+# =============================================
+# Configuration — এখানে customize করো
+# =============================================
+CONFIG = {
+    "template_path": "template/certificate.png",
+    "output_folder": "output",
+    "excel_file": "students.xlsx",
+
+    # Text Position (x, y) — template অনুযায়ী adjust করো
+    "name_position": (760, 420),
+    "course_position": (760, 520),
+    "date_position": (760, 620),
+    "grade_position": (760, 720),
+
+    # Font Size
+    "name_font_size": 60,
+    "course_font_size": 40,
+    "date_font_size": 35,
+    "grade_font_size": 35,
+
+    # Text Color (R, G, B)
+    "name_color": (0, 0, 128),       # Dark Blue
+    "course_color": (50, 50, 50),    # Dark Gray
+    "date_color": (80, 80, 80),      # Gray
+    "grade_color": (0, 128, 0),      # Green
+}
+
+
+# =============================================
+# ধাপ ৫: Template ছাড়া নিজেই Certificate বানাও
+# =============================================
+def create_certificate_template():
+    """Template না থাকলে নিজেই তৈরি করো"""
+    
+    width, height = 1500, 1000
+    img = Image.new('RGB', (width, height), color=(255, 255, 240))
+    draw = ImageDraw.Draw(img)
+
+    # Border তৈরি করো
+    border_color = (0, 0, 128)
+    draw.rectangle([20, 20, width-20, height-20], outline=border_color, width=8)
+    draw.rectangle([35, 35, width-35, height-35], outline=(218, 165, 32), width=4)
+
+    # Header Background
+    draw.rectangle([20, 20, width-20, 120], fill=(0, 0, 128))
+
+    # Title Text
+    try:
+        title_font = ImageFont.truetype("arial.ttf", 55)
+        subtitle_font = ImageFont.truetype("arial.ttf", 30)
+        label_font = ImageFont.truetype("arial.ttf", 28)
+    except:
+        title_font = ImageFont.load_default()
+        subtitle_font = title_font
+        label_font = title_font
+
+    # Header
+    draw.text((width//2, 70), "🏆 CERTIFICATE OF COMPLETION 🏆",
+              fill=(255, 215, 0), font=title_font, anchor="mm")
+
+    # Body text
+    draw.text((width//2, 200), "This is to certify that",
+              fill=(100, 100, 100), font=subtitle_font, anchor="mm")
+
+    # Name placeholder line
+    draw.line([(300, 310), (1200, 310)], fill=(0, 0, 128), width=3)
+    draw.text((width//2, 260), "[STUDENT NAME]",
+              fill=(0, 0, 128), font=title_font, anchor="mm")
+
+    draw.text((width//2, 360), "has successfully completed the course",
+              fill=(100, 100, 100), font=subtitle_font, anchor="mm")
+
+    # Course placeholder
+    draw.text((width//2, 430), "[COURSE NAME]",
+              fill=(50, 50, 50), font=subtitle_font, anchor="mm")
+    draw.line([(300, 460), (1200, 460)], fill=(218, 165, 32), width=2)
+
+    # Date & Grade
+    draw.text((400, 570), "Date: [DATE]", fill=(80, 80, 80), font=label_font, anchor="mm")
+    draw.text((1100, 570), "Grade: [GRADE]", fill=(0, 128, 0), font=label_font, anchor="mm")
+
+    # Signature lines
+    draw.line([(250, 800), (550, 800)], fill=(0, 0, 0), width=2)
+    draw.line([(950, 800), (1250, 800)], fill=(0, 0, 0), width=2)
+    draw.text((400, 830), "Director Signature", fill=(100, 100, 100), font=label_font, anchor="mm")
+    draw.text((1100, 830), "Instructor Signature", fill=(100, 100, 100), font=label_font, anchor="mm")
+
+    # Footer
+    draw.rectangle([20, height-80, width-20, height-20], fill=(0, 0, 128))
+    draw.text((width//2, height-50), "Issued with Pride & Excellence",
+              fill=(255, 215, 0), font=label_font, anchor="mm")
+
+    os.makedirs("template", exist_ok=True)
+    img.save("template/certificate.png")
+    print("✅ Template তৈরি হয়েছে!")
+    return img
+
+
+# =============================================
+# ধাপ ৬: একটি Certificate Generate করো
+# =============================================
+def generate_certificate(name, course, date, grade):
+    
+    # Template load করো
+    if not os.path.exists(CONFIG["template_path"]):
+        print("⚠️ Template নেই, নতুন তৈরি করা হচ্ছে...")
+        create_certificate_template()
+
+    img = Image.open(CONFIG["template_path"]).copy()
+    draw = ImageDraw.Draw(img)
+
+    # Font load করো
+    try:
+        name_font = ImageFont.truetype("arial.ttf", CONFIG["name_font_size"])
+        course_font = ImageFont.truetype("arial.ttf", CONFIG["course_font_size"])
+        date_font = ImageFont.truetype("arial.ttf", CONFIG["date_font_size"])
+        grade_font = ImageFont.truetype("arial.ttf", CONFIG["grade_font_size"])
+    except:
+        print("⚠️ Arial font নেই, default ব্যবহার হচ্ছে")
+        name_font = ImageFont.load_default()
+        course_font = date_font = grade_font = name_font
+
+    width = img.width
+
+    # Name লিখো (center aligned)
+    draw.text((width//2, CONFIG["name_position"][1]),
+              name, fill=CONFIG["name_color"],
+              font=name_font, anchor="mm")
+
+    # Course লিখো
+    draw.text((width//2, CONFIG["course_position"][1]),
+              course, fill=CONFIG["course_color"],
+              font=course_font, anchor="mm")
+
+    # Date লিখো
+    draw.text((400, CONFIG["date_position"][1]),
+              f"Date: {date}", fill=CONFIG["date_color"],
+              font=date_font, anchor="mm")
+
+    # Grade লিখো
+    draw.text((1100, CONFIG["grade_position"][1]),
+              f"Grade: {grade}", fill=CONFIG["grade_color"],
+              font=grade_font, anchor="mm")
+
+    # Output folder তৈরি করো
+    os.makedirs(CONFIG["output_folder"], exist_ok=True)
+
+    # Save করো
+    filename = f"{name.replace(' ', '_')}_certificate.png"
+    output_path = os.path.join(CONFIG["output_folder"], filename)
+    img.save(output_path, quality=95)
+
+    return output_path
+
+
+# =============================================
+# ধাপ ৭: Bulk Certificate Generate করো
+# =============================================
+def generate_bulk_certificates():
+    
+    # Excel file পড়ো
+    if not os.path.exists(CONFIG["excel_file"]):
+        print("❌ students.xlsx পাওয়া যাচ্ছে না!")
+        print("📝 Sample file তৈরি করা হচ্ছে...")
+        create_sample_excel()
+        return
+
+    df = pd.read_excel(CONFIG["excel_file"])
+    total = len(df)
+    success = 0
+
+    print(f"\n🎓 মোট {total} জনের Certificate তৈরি হবে...\n")
+
+    for index, row in df.iterrows():
+        try:
+            name = str(row['Name'])
+            course = str(row['Course'])
+            date = str(row['Date'])
+            grade = str(row['Grade'])
+
+            output_path = generate_certificate(name, course, date, grade)
+            success += 1
+            print(f"✅ [{success}/{total}] {name} → {output_path}")
+
+        except Exception as e:
+            print(f"❌ Error for {row.get('Name', 'Unknown')}: {e}")
+
+    print(f"\n🎉 সম্পন্ন! {success}/{total} টি Certificate তৈরি হয়েছে!")
+    print(f"📁 Output folder: {CONFIG['output_folder']}/")
+
+
+# =============================================
+# Sample Excel তৈরি করো
+# =============================================
+def create_sample_excel():
+    data = {
+        'Name': ['Rahim Uddin', 'Karim Miah', 'Sumaiya Akter', 'Nabil Hasan'],
+        'Course': ['Python Programming', 'Web Development', 'Data Science', 'Machine Learning'],
+        'Date': ['19/04/2026', '19/04/2026', '19/04/2026', '19/04/2026'],
+        'Grade': ['A+', 'A', 'B+', 'A']
+    }
+    df = pd.DataFrame(data)
+    df.to_excel('students.xlsx', index=False)
+    print("✅ Sample students.xlsx তৈরি হয়েছে!")
+
+
+# =============================================
+# Main — Run করো
+# =============================================
+if __name__ == "__main__":
+    print("=" * 50)
+    print("🎓 CERTIFICATE GENERATOR")
+    print("=" * 50)
+    print("\n1. Template তৈরি করো")
+    print("2. একটি Certificate বানাও")
+    print("3. Bulk Certificate বানাও")
+
+    choice = input("\nতোমার choice দাও (1/2/3): ")
+
+    if choice == "1":
+        create_certificate_template()
+
+    elif choice == "2":
+        name = input("name:seyam ")
+        course = input("course:Data Structures ")
+        date = input("date:20.10.26 ")
+        grade = input("grade:A+ ")
+        path = generate_certificate(name, course, date, grade)
+        print(f"\n✅ Certificate তৈরি হয়েছে: {path}")
+
+    elif choice == "3":
+        generate_bulk_certificates()
+
+    else:
+        print("❌ ভুল choice!")
+
